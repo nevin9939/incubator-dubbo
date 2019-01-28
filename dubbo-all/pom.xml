@@ -19,17 +19,27 @@
     <parent>
         <groupId>org.apache.dubbo</groupId>
         <artifactId>dubbo-parent</artifactId>
-        <version>2.7.1-SNAPSHOT</version>
+        <version>2.7.1.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dubbo</artifactId>
-    <version>2.7.1-SNAPSHOT</version>
+    <version>2.7.1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>dubbo-all</name>
     <description>The all in one project of dubbo</description>
     <properties>
         <skip_maven_deploy>false</skip_maven_deploy>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>olym-central</id>
+            <url>http://maven.olymtech.com:8081/nexus/content/repositories/olym_releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>olym_snapshots</id>
+            <url>http://maven.olymtech.com:8081/nexus/content/repositories/olym_snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
