@@ -309,6 +309,9 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                         url = url.setProtocol(Constants.REGISTRY_PROTOCOL);
                         if ((provider && url.getParameter(Constants.REGISTER_KEY, true))
                                 || (!provider && url.getParameter(Constants.SUBSCRIBE_KEY, true))) {
+                            if(StringUtils.isNotEmpty(config.getReggroup())){
+                                url=url.addParameter(Constants.GROUP_KEY,config.getReggroup());
+                            }
                             registryList.add(url);
                         }
                     }

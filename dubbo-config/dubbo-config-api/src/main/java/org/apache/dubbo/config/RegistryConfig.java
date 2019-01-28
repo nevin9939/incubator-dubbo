@@ -126,6 +126,11 @@ public class RegistryConfig extends AbstractConfig {
     private Boolean isDefault;
 
     /**
+     * 注册中心分组
+     */
+    protected String reggroup;
+
+    /**
      * Simple the registry. both useful for provider and consumer
      *
      * @since 2.7.0
@@ -379,6 +384,14 @@ public class RegistryConfig extends AbstractConfig {
 
     public void setDefault(Boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public String getReggroup() {
+        return reggroup;
+    }
+
+    public void setReggroup(String reggroup) {
+        this.reggroup = reggroup;
     }
 
     public Boolean getSimplified() {

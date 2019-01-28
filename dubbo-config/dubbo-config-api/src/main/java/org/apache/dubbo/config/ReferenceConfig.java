@@ -355,7 +355,13 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                         if (monitorUrl != null) {
                             map.put(Constants.MONITOR_KEY, URL.encode(monitorUrl.toFullString()));
                         }
-                        urls.add(u.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map)));
+                        u=u.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map));
+                        if(StringUtils.isNotEmpty(super.getReggroup())){
+                            u=u.addParameter(Constants.GROUP_KEY,super.getReggroup());
+                        }else{
+                            u=u.removeParameter(Constants.GROUP_KEY);
+                        }
+                        urls.add(u);
                     }
                 }
                 if (urls.isEmpty()) {
