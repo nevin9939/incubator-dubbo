@@ -26,6 +26,17 @@
         </license>
     </licenses>
 
+    <distributionManagement>
+        <repository>
+            <id>olym-central</id>
+            <url>http://maven.olymtech.com:8081/nexus/content/repositories/olym_releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>olym_snapshots</id>
+            <url>http://maven.olymtech.com:8081/nexus/content/repositories/olym_snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <scm>
         <url>https://github.com/apache/incubator-dubbo</url>
         <connection>scm:git:https://github.com/apache/incubator-dubbo.git</connection>
