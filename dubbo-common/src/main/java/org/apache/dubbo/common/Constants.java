@@ -793,6 +793,16 @@ public class Constants {
     public static final String TELNET = "telnet";
 
     /**
+     * Hash nodes name
+     */
+    public static final String HASH_NODES = "hash.nodes";
+
+    /**
+     * Hash arguments name
+     */
+    public static final String HASH_ARGUMENTS = "hash.arguments";
+
+    /**
      * Application name;
      */
     public static final String NAME = "name";
@@ -839,5 +849,18 @@ public class Constants {
     public static final String DEFAULT_ETCD3_NOTIFY_QUEUES_KEY = "etcd3.notify.queues";
 
     public static final int DEFAULT_GRPC_QUEUES = 300_0000;
+
+    /**
+     * metrics
+     */
+    public static final String DUBBO_PROVIDER = "dubbo.provider";
+    public static final String DUBBO_CONSUMER = "dubbo.consumer";
+    public static final String DUBBO_PROVIDER_METHOD = "dubbo.provider.method";
+    public static final String DUBBO_CONSUMER_METHOD = "dubbo.consumer.method";
+    public static final String SERVICE = "service";
+    public static final String METHOD = "method";
+    public static final String DUBBO_GROUP = "dubbo";
+    public static final String METRICS_KEY = "metrics";
+
 
 }
