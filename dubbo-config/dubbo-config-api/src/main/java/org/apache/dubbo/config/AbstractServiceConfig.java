@@ -73,8 +73,9 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
      * Whether to register as a dynamic service or not on register center, it the value is false, the status will be disabled
      * after the service registered,and it needs to be enabled manually; if you want to disable the service, you also need
      * manual processing
+     * default value set null
      */
-    protected Boolean dynamic = false;
+    protected Boolean dynamic;
 
     /**
      * Whether to use token
