@@ -152,7 +152,8 @@ public class NetUtils {
     }
 
     static boolean isValidPublicAddress(InetAddress address) {
-        return !address.isSiteLocalAddress() && !address.isLoopbackAddress();
+//        return !address.isSiteLocalAddress() && !address.isLoopbackAddress();
+        return !address.isLoopbackAddress();
     }
 
     /**
