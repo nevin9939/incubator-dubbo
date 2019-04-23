@@ -241,44 +241,54 @@ public class NetUtils {
     }
 
     private static InetAddress getLocalAddress0() {
-        InetAddress localAddress = null;
-        try {
-            localAddress = InetAddress.getLocalHost();
-            Optional<InetAddress> addressOp = toValidAddress(localAddress);
-            if (addressOp.isPresent()) {
-                return addressOp.get();
-            }
-        } catch (Throwable e) {
-            logger.warn(e);
-        }
-
+        InetAddress candidateAddress = null;
+        int interfacesIndex = 0;
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            if (null == interfaces) {
-                return localAddress;
-            }
-            while (interfaces.hasMoreElements()) {
-                try {
-                    NetworkInterface network = interfaces.nextElement();
-                    Enumeration<InetAddress> addresses = network.getInetAddresses();
-                    while (addresses.hasMoreElements()) {
-                        try {
-                            Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
-                            if (addressOp.isPresent()) {
-                                return addressOp.get();
-                            }
-                        } catch (Throwable e) {
-                            logger.warn(e);
+            if (null != interfaces) {
+                while (interfaces.hasMoreElements()) {
+                    try {
+                        NetworkInterface network = interfaces.nextElement();
+                        // Remove loopback interface, subinterface, not running interface
+                        if (network.isLoopback() || network.isVirtual() || !network.isUp()) {
+                            continue;
                         }
+                        Enumeration<InetAddress> addresses = network.getInetAddresses();
+                        while (addresses.hasMoreElements()) {
+                            try {
+                                Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
+                                if (addressOp.isPresent()) {
+                                    InetAddress tempAddress = addressOp.get();
+                                    if (candidateAddress == null || interfacesIndex > network.getIndex()) {
+                                        // Priority is given to the network card with a small index value,
+                                        // which can exclude the IP of the self-built virtual machine.
+                                        candidateAddress = tempAddress;
+                                        interfacesIndex = network.getIndex();
+                                    }
+                                }
+                            } catch (Throwable e) {
+                                logger.warn(e);
+                            }
+                        }
+                    } catch (Throwable e) {
+                        logger.warn(e);
                     }
-                } catch (Throwable e) {
-                    logger.warn(e);
+                }
+            }
+            if(candidateAddress == null){
+                InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
+                if (jdkSuppliedAddress == null) {
+                    throw new UnknownHostException("The JDK InetAddress.getLocalHost() method unexpectedly returned null.");
+                }
+                Optional<InetAddress> addressOp = toValidAddress(jdkSuppliedAddress);
+                if (addressOp.isPresent()) {
+                    candidateAddress = addressOp.get();
                 }
             }
         } catch (Throwable e) {
             logger.warn(e);
         }
-        return localAddress;
+        return candidateAddress;
     }
 
     public static String getHostName(String address) {
