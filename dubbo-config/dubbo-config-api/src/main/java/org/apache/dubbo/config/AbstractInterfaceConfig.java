@@ -141,6 +141,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
      * Disconnection events
      */
     protected String ondisconnect;
+
+    /**
+     * The metrics configuration
+     */
+    protected MetricsConfig metrics;
     protected MetadataReportConfig metadataReportConfig;
 
     protected ConfigCenterConfig configCenter;
@@ -149,6 +154,8 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     private Integer callbacks;
     // the scope for referring/exporting a service, if it's local, it means searching in current JVM only.
     private String scope;
+
+    protected String tag;
 
     /**
      * Check whether the registry config is exists, and then conversion it to {@link RegistryConfig}
@@ -336,6 +343,9 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         String hostToRegistry = ConfigUtils.getSystemProperty(Constants.DUBBO_IP_TO_REGISTRY);
         if (StringUtils.isEmpty(hostToRegistry)) {
             hostToRegistry = NetUtils.getLocalHost();
+        } else if (NetUtils.isInvalidLocalHost(hostToRegistry)) {
+            throw new IllegalArgumentException("Specified invalid registry ip from property:" +
+                    Constants.DUBBO_IP_TO_REGISTRY + ", value:" + hostToRegistry);
         }
         map.put(Constants.REGISTER_IP_KEY, hostToRegistry);
         appendParameters(map, monitor);
@@ -825,4 +835,20 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         this.metadataReportConfig = metadataReportConfig;
     }
 
+    public MetricsConfig getMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(MetricsConfig metrics) {
+        this.metrics = metrics;
+    }
+
+    @Parameter(key = Constants.TAG_KEY, useKeyAsProperty = false)
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 }
