@@ -104,7 +104,7 @@ public class ConfigCenterConfig extends AbstractConfig {
         this.cluster = cluster;
     }
 
-    @Parameter(key = Constants.CONFIG_NAMESPACE_KEY, useKeyAsProperty = false)
+    @Parameter(key = Constants.CONFIG_NAMESPACE_KEY)
     public String getNamespace() {
         return namespace;
     }
@@ -113,7 +113,7 @@ public class ConfigCenterConfig extends AbstractConfig {
         this.namespace = namespace;
     }
 
-    @Parameter(key = Constants.CONFIG_GROUP_KEY, useKeyAsProperty = false)
+    @Parameter(key = Constants.CONFIG_GROUP_KEY)
     public String getGroup() {
         return group;
     }
