@@ -143,7 +143,22 @@ public class AccessLogFilter implements Filter {
                     }
 
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    String errMsg = e.getMessage();
+                    if(null == errMsg){
+                        Throwable te = e.getCause();
+                        if(te !=null) {
+                            errMsg = te.getMessage();
+                        }
+                        errMsg = errMsg == null ? "" : errMsg;
+                        StackTraceElement[] stackTraceElements =  e.getStackTrace();
+                        if(stackTraceElements != null && stackTraceElements.length > 0){
+                            StackTraceElement stackTraceElement = stackTraceElements[0];
+                            errMsg += " "+stackTraceElement.toString();
+                        }
+
+                        errMsg = e.getClass().getName()+" ==>> "+errMsg;
+                    }
+                    logger.error(errMsg, e);
                 }
             }
         }

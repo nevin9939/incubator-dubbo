@@ -350,6 +350,9 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                                 .build();
                         if ((provider && url.getParameter(REGISTER_KEY, true))
                                 || (!provider && url.getParameter(SUBSCRIBE_KEY, true))) {
+                            if(StringUtils.isNotEmpty(config.getReggroup())){
+                                url=url.addParameter(Constants.GROUP_KEY,config.getReggroup());
+                            }
                             registryList.add(url);
                         }
                     }
@@ -621,6 +624,14 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 ConfigCenterConfig cc = configManager.getConfigCenter().orElse(new ConfigCenterConfig());
                 cc.setProtocol(rc.getProtocol());
                 cc.setAddress(rc.getAddress());
+                String namespace = rc.getGroup();
+                if(namespace == null || namespace.length() == 0){
+                    namespace = rc.getReggroup();
+                }
+                if(namespace != null && namespace.length() > 0){
+                    cc.setGroup(namespace);
+                    cc.setNamespace(namespace);
+                }
                 cc.setHighestPriority(false);
                 setConfigCenter(cc);
                 startConfigCenter();

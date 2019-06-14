@@ -86,6 +86,16 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
      */
     protected String group;
 
+    /**
+     * 注册中心分组
+     */
+    protected String reggroup;
+
+    /**
+     * 服务名称
+     */
+    protected String servicename;
+
     public Boolean isCheck() {
         return check;
     }
@@ -221,5 +231,21 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     public void setGroup(String group) {
         checkKey(GROUP_KEY, group);
         this.group = group;
+    }
+
+    public String getReggroup() {
+        return reggroup;
+    }
+
+    public void setReggroup(String reggroup) {
+        this.reggroup = reggroup;
+    }
+
+    public String getServicename() {
+        return servicename;
+    }
+
+    public void setServicename(String servicename) {
+        this.servicename = servicename;
     }
 }

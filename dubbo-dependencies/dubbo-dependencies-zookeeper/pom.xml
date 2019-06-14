@@ -36,6 +36,17 @@
         <maven_flatten_version>1.1.0</maven_flatten_version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>olym-central</id>
+            <url>http://maven.olymtech.com:8081/nexus/content/repositories/olym_releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>olym_snapshots</id>
+            <url>http://maven.olymtech.com:8081/nexus/content/repositories/olym_snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
