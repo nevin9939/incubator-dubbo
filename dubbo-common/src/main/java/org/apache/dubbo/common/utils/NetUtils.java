@@ -54,7 +54,7 @@ public class NetUtils {
     private static final Pattern LOCAL_IP_PATTERN = Pattern.compile("127(\\.\\d{1,3}){3}$");
     private static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
 
-    private static final Map<String, String> hostNameCache = new LRUCache<>(1000);
+    private static final Map<String, String> HOST_NAME_CACHE = new LRUCache<>(1000);
     private static volatile InetAddress LOCAL_ADDRESS = null;
 
     private static final String SPLIT_IPV4_CHARECTER = "\\.";
@@ -105,7 +105,6 @@ public class NetUtils {
         return Constants.ANYHOST_VALUE.equals(host);
     }
 
-    // FIXME: should remove this method completely
     public static boolean isInvalidLocalHost(String host) {
         return host == null
                 || host.length() == 0
@@ -114,7 +113,6 @@ public class NetUtils {
                 || (LOCAL_IP_PATTERN.matcher(host).matches());
     }
 
-    // FIXME: should remove this method completely
     public static boolean isValidLocalHost(String host) {
         return !isInvalidLocalHost(host);
     }
@@ -125,35 +123,28 @@ public class NetUtils {
     }
 
     static boolean isValidV4Address(InetAddress address) {
+        if (address == null || address.isLoopbackAddress()) {
+            return false;
+        }
         String name = address.getHostAddress();
-        return (name != null
+        boolean result = (name != null
                 && IP_PATTERN.matcher(name).matches()
                 && !Constants.ANYHOST_VALUE.equals(name)
                 && !Constants.LOCALHOST_VALUE.equals(name));
+        return result;
     }
 
     /**
-     * Check if an ipv6 address is reachable.
+     * Check if an ipv6 address
      *
-     * @param address the given address
      * @return true if it is reachable
      */
-    static boolean isValidV6Address(Inet6Address address) {
+    static boolean isPreferIPV6Address() {
         boolean preferIpv6 = Boolean.getBoolean("java.net.preferIPv6Addresses");
         if (!preferIpv6) {
             return false;
         }
-        try {
-            return address.isReachable(100);
-        } catch (IOException e) {
-            // ignore
-        }
         return false;
-    }
-
-    static boolean isValidPublicAddress(InetAddress address) {
-//        return !address.isSiteLocalAddress() && !address.isLoopbackAddress();
-        return !address.isLoopbackAddress();
     }
 
     /**
@@ -226,30 +217,38 @@ public class NetUtils {
     }
 
     private static Optional<InetAddress> toValidAddress(InetAddress address) {
-        if (isValidPublicAddress(address)) {
             if (address instanceof Inet6Address) {
                 Inet6Address v6Address = (Inet6Address) address;
-                if (isValidV6Address(v6Address)) {
+            if (isPreferIPV6Address()) {
                     return Optional.ofNullable(normalizeV6Address(v6Address));
                 }
             }
             if (isValidV4Address(address)) {
                 return Optional.of(address);
             }
-        }
         return Optional.empty();
     }
 
     private static InetAddress getLocalAddress0() {
-        InetAddress candidateAddress = null;
-        int interfacesIndex = 0;
+        InetAddress localAddress = null;
+        try {
+            localAddress = InetAddress.getLocalHost();
+            Optional<InetAddress> addressOp = toValidAddress(localAddress);
+            if (addressOp.isPresent()) {
+                return addressOp.get();
+            }
+        } catch (Throwable e) {
+            logger.warn(e);
+        }
+
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            if (null != interfaces) {
+            if (null == interfaces) {
+                return localAddress;
+            }
                 while (interfaces.hasMoreElements()) {
                     try {
                         NetworkInterface network = interfaces.nextElement();
-                        // Remove loopback interface, subinterface, not running interface
                         if (network.isLoopback() || network.isVirtual() || !network.isUp()) {
                             continue;
                         }
@@ -258,12 +257,12 @@ public class NetUtils {
                             try {
                                 Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
                                 if (addressOp.isPresent()) {
-                                    InetAddress tempAddress = addressOp.get();
-                                    if (candidateAddress == null || interfacesIndex > network.getIndex()) {
-                                        // Priority is given to the network card with a small index value,
-                                        // which can exclude the IP of the self-built virtual machine.
-                                        candidateAddress = tempAddress;
-                                        interfacesIndex = network.getIndex();
+                                try {
+                                    if(addressOp.get().isReachable(100)){
+                                        return addressOp.get();
+                                    }
+                                } catch (IOException e) {
+                                    // ignore
                                     }
                                 }
                             } catch (Throwable e) {
@@ -274,21 +273,10 @@ public class NetUtils {
                         logger.warn(e);
                     }
                 }
-            }
-            if(candidateAddress == null){
-                InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
-                if (jdkSuppliedAddress == null) {
-                    throw new UnknownHostException("The JDK InetAddress.getLocalHost() method unexpectedly returned null.");
-                }
-                Optional<InetAddress> addressOp = toValidAddress(jdkSuppliedAddress);
-                if (addressOp.isPresent()) {
-                    candidateAddress = addressOp.get();
-                }
-            }
         } catch (Throwable e) {
             logger.warn(e);
         }
-        return candidateAddress;
+        return localAddress;
     }
 
     public static String getHostName(String address) {
@@ -297,14 +285,14 @@ public class NetUtils {
             if (i > -1) {
                 address = address.substring(0, i);
             }
-            String hostname = hostNameCache.get(address);
+            String hostname = HOST_NAME_CACHE.get(address);
             if (hostname != null && hostname.length() > 0) {
                 return hostname;
             }
             InetAddress inetAddress = InetAddress.getByName(address);
             if (inetAddress != null) {
                 hostname = inetAddress.getHostName();
-                hostNameCache.put(address, hostname);
+                HOST_NAME_CACHE.put(address, hostname);
                 return hostname;
             }
         } catch (Throwable e) {

@@ -183,16 +183,16 @@ public class NetUtilsTest {
         assertThat(url, equalTo("dubbo://host:1234/foo"));
     }
 
-    @Test
-    public void testIsValidV6Address() {
-        String saved = System.getProperty("java.net.preferIPv6Addresses", "false");
-        System.setProperty("java.net.preferIPv6Addresses", "true");
-        InetAddress address = NetUtils.getLocalAddress();
-        if (address instanceof Inet6Address) {
-            assertThat(NetUtils.isValidV6Address((Inet6Address) address), equalTo(true));
-        }
-        System.setProperty("java.net.preferIPv6Addresses", saved);
-    }
+//    @Test
+//    public void testIsValidV6Address() {
+//        String saved = System.getProperty("java.net.preferIPv6Addresses", "false");
+//        System.setProperty("java.net.preferIPv6Addresses", "true");
+//        InetAddress address = NetUtils.getLocalAddress();
+//        if (address instanceof Inet6Address) {
+//            assertThat(NetUtils.isValidV6Address((Inet6Address) address), equalTo(true));
+//        }
+//        System.setProperty("java.net.preferIPv6Addresses", saved);
+//    }
 
     /**
      * Mockito starts to support mocking final classes since 2.1.0
