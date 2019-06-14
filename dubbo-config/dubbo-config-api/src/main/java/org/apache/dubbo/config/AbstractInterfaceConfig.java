@@ -65,6 +65,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.RELEASE_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.TIMESTAMP_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.CLUSTER_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
 import static org.apache.dubbo.config.Constants.DUBBO_IP_TO_REGISTRY;
 import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_PROTOCOL;
 import static org.apache.dubbo.config.Constants.LAYER_KEY;
@@ -351,7 +352,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                         if ((provider && url.getParameter(REGISTER_KEY, true))
                                 || (!provider && url.getParameter(SUBSCRIBE_KEY, true))) {
                             if(StringUtils.isNotEmpty(config.getReggroup())){
-                                url=url.addParameter(Constants.GROUP_KEY,config.getReggroup());
+                                url=url.addParameter(GROUP_KEY,config.getReggroup());
                             }
                             registryList.add(url);
                         }
