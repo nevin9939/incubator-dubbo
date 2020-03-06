@@ -398,6 +398,7 @@ public class Constants {
     public static final String SUBSCRIBE_KEY = "subscribe";
 
     public static final String GROUP_KEY = "group";
+    public static final String REGGROUP_KEY = "reggroup";
 
     public static final String PATH_KEY = "path";
 
